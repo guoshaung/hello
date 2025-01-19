@@ -10,9 +10,8 @@ with st.sidebar:
 </center>""",unsafe_allow_html=True)
     system_message=st.text_area("角色定义","你是一个能帮助用户的ai助手")
     temperature=st.slider("创造力调节",min_value=0.0,max_value=2.0,step=0.1)
-
 st.title("🤖Ai聊天机器人")
-
+# 初始化界面的聊天框
 if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "assistant",
@@ -22,17 +21,23 @@ if "messages" not in st.session_state:
         "content": "你好"
     }]
 
+# 展示历史聊天记录
 for message in st.session_state.messages:
+    # 增加对 'content' 键存在性的检查
     if "content" in message:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
     else:
+        # 如果 'content' 不存在，可以适当处理，比如打印警告或跳过这条消息
         st.warning(f"Warning: Message missing 'content': {message}")
 
-client = OpenAI(api_key="your-api-key", base_url="https://api.deepseek.com")
+# 初始化OpenAI客户端
+client = OpenAI(api_key="sk-be9be9b062f340d2b20bea38375e4173", base_url="https://api.deepseek.com")
 
+# 初始化消息历史
 if "messageHistory" not in st.session_state:
     st.session_state.messageHistory = []
+
 
 def chat_stream(query, system_message = None, temperature = 1):
     if system_message:
@@ -45,6 +50,8 @@ def chat_stream(query, system_message = None, temperature = 1):
     )
     return response
 
+
+# 用户输入
 user_query = st.chat_input("说点什么...")
 if user_query:
     with st.chat_message("user"):
